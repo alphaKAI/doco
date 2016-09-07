@@ -82,12 +82,13 @@ void updateAll() {
 
 string[] filter() {
   string[] ret;
+  auto rgx = regex(E.query);
 
   if (E.query.empty) {
     ret = E.inputs;
   } else {
     foreach (elem; E.inputs) {
-      if (elem.match(regex(E.query))) {
+      if (elem.match(rgx)) {
         ret ~= elem;
       }
     }
