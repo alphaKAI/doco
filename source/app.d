@@ -62,7 +62,7 @@ void updateQuery(bool init = false) {
   }
 
   if (init) {
-    E.filtered = filter;
+    E.filtered     = filter;
     E.render_items = E.filtered;
     E.selected = 0;
     E.cursor   = 0;
@@ -170,6 +170,6 @@ void main() {
   shutdown;
 
   if (selected) {
-    writeln(E.inputs[E.offset + E.selected]);
+    writeln(E.render_items[E.offset + E.selected]);
   }
 }
