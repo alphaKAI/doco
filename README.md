@@ -1,7 +1,7 @@
 #doco
 Yet another fuzzy text selector.  
 This software is inspired by [peco](https://github.com/peco/peco).  
-peco is written in Go, a software like peco which written in D didn't exist thus I made.  
+peco is written in Go, a software like peco written in D didn't exist thus I made.  
 
 #Note
 Current version doesn't support multibyte character.    
