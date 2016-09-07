@@ -107,10 +107,7 @@ void main() {
   init;
   clear;
 
-  size_t ct;
   bool quit;
-  int[] keys;
-  uint[] chs;
   bool selected;
 
   updateQuery(true);
