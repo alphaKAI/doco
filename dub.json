@@ -1,0 +1,12 @@
+{
+  "name": "doco",
+  "authors": [
+    "alphaKAI"
+	],
+  "description": "Yet another fuzzy text selector.",
+  "copyright": "Copyright (C) 2016, alphaKAI",
+  "license": "MIT",
+  "dependencies":{
+    "termbox":"*"
+  }
+}
