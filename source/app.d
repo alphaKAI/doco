@@ -170,6 +170,6 @@ void main() {
   shutdown;
 
   if (selected) {
-    writeln(E.inputs[E.offset + E.selected]);
+    writeln(E.render_items[E.selected]);
   }
 }
