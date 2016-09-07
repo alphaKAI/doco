@@ -27,6 +27,7 @@ static Env E;
 
 void print(ulong x, ulong y, string line, bool selected) {
   uint c;
+
   if (x < line.length) {
     c = cast(uint)line[x];
   } else {
@@ -41,7 +42,7 @@ void print(ulong x, ulong y, string line, bool selected) {
 }
 
 void updateQuery(bool init = false) {
-  string query_header = "QUERY> ";
+  immutable query_header = "QUERY> ";
   string print_query  = query_header ~  E.query;
 
   foreach (x; width.iota) {
@@ -61,7 +62,7 @@ void updateQuery(bool init = false) {
   }
 
   if (init) {
-    E.filtered = filter;
+    E.filtered     = filter;
     E.render_items = E.filtered;
     E.selected = 0;
     E.cursor   = 0;
@@ -107,10 +108,7 @@ void main() {
   init;
   clear;
 
-  size_t ct;
   bool quit;
-  int[] keys;
-  uint[] chs;
   bool selected;
 
   updateQuery(true);
@@ -122,7 +120,8 @@ void main() {
     kevent.type = EventType.key;
     pollEvent(&kevent);
 
-    auto key = kevent.key;
+    immutable key = kevent.key;
+
     with (KeyAction) {
       if (key == ENTER) { selected = true; quit = true; }
       else if (key == ESC) { quit = true; }
@@ -133,11 +132,12 @@ void main() {
         }
       }
       else if (key == ARROW_UP)    {
-        if (E.selected > -1) E.selected--;
-        if (E.cursor > 0) E.cursor--;
+        if (E.selected > -1) { E.selected--; }
+        if (E.cursor > 0) { E.cursor--; }
 
         if (E.selected == -1) {
           E.selected++;
+
           if (E.offset > 0) {
             E.offset--;
             E.render_items = E.filtered[E.offset..$];
@@ -145,9 +145,9 @@ void main() {
         }
       }
       else if (key == ARROW_DOWN)  {
-        if (E.cursor < E.render_items.length-1) E.cursor++;
-        if ((E.render_items.length < height - 1) && (E.selected < E.render_items.length-1)) E.selected++;
-        else if ((E.render_items.length > height - 1) && (E.selected < height-1)) E.selected++;
+        if (E.cursor < E.render_items.length-1) { E.cursor++; }
+        if ((E.render_items.length < height - 1) && (E.selected < E.render_items.length-1)) { E.selected++; }
+        else if ((E.render_items.length > height - 1) && (E.selected < height-1)) { E.selected++; }
 
         if (E.selected == height - 1) {
           E.selected--;
