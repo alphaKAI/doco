@@ -119,7 +119,8 @@ void main() {
     kevent.type = EventType.key;
     pollEvent(&kevent);
 
-    auto key = kevent.key;
+    immutable key = kevent.key;
+
     with (KeyAction) {
       if (key == ENTER) { selected = true; quit = true; }
       else if (key == ESC) { quit = true; }
