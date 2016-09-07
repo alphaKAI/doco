@@ -67,7 +67,7 @@ void updateQuery(bool init = false) {
   }
 }
 
-void updateAll() {
+void updateItems() {
   clear;
   updateQuery;
 
@@ -116,7 +116,7 @@ void main() {
   updateQuery(true);
 
   while (!quit) {
-    updateAll;
+    updateItems;
 
     Event kevent;
     kevent.type = EventType.key;
