@@ -42,7 +42,7 @@ void print(ulong x, ulong y, string line, bool selected) {
 }
 
 void updateQuery(bool init = false) {
-  string query_header = "QUERY> ";
+  immutable query_header = "QUERY> ";
   string print_query  = query_header ~  E.query;
 
   foreach (x; width.iota) {

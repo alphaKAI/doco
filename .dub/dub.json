@@ -1,0 +1,8 @@
+{
+	"dub": {
+		"lastUpgrade": "2016-09-07T19:51:03.2372369",
+		"cachedUpgrades": {
+			"termbox": "0.0.5"
+		}
+	}
+}
