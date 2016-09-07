@@ -20,6 +20,7 @@ struct Env {
   string query;
   long selected,
        cursor;
+  size_t offset;
 }
 
 static Env E;
@@ -64,6 +65,7 @@ void updateQuery(bool init = false) {
     E.render_items = E.filtered;
     E.selected = 0;
     E.cursor   = 0;
+    E.offset   = 0;
   }
 }
 
@@ -111,8 +113,6 @@ void main() {
   uint[] chs;
   bool selected;
 
-  size_t offset;
-
   updateQuery(true);
 
   while (!quit) {
@@ -138,9 +138,9 @@ void main() {
 
         if (E.selected == -1) {
           E.selected++;
-          if (offset > 0) {
-            offset--;
-            E.render_items = E.filtered[offset..$];
+          if (E.offset > 0) {
+            E.offset--;
+            E.render_items = E.filtered[E.offset..$];
           }
         }
       }
@@ -151,9 +151,9 @@ void main() {
 
         if (E.selected == height - 1) {
           E.selected--;
-          if (offset < E.filtered.length-1) {
-            offset++;
-            E.render_items = E.filtered[offset..$];
+          if (E.offset < E.filtered.length-1) {
+            E.offset++;
+            E.render_items = E.filtered[E.offset..$];
           }
         }
       }
@@ -170,6 +170,6 @@ void main() {
   shutdown;
 
   if (selected) {
-    writeln(E.inputs[E.selected]);
+    writeln(E.inputs[E.offset + E.selected]);
   }
 }
