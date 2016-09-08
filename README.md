@@ -2,6 +2,7 @@
 Yet another fuzzy text selector.  
 This software is inspired by [peco](https://github.com/peco/peco).  
 peco is written in Go, a software like peco written in D haven't existed thus I made.  
+peco doesn't support regex as a search query but doco supports filtering by regex query(by default)!  
 
 #Note
 Current version doesn't support multibyte character.    
