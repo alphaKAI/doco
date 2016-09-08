@@ -164,6 +164,7 @@ void main() {
 
         if (E.selected == height - 1) {
           E.selected--;
+
           if (E.offset < E.filtered.length-1) {
             E.offset++;
             E.render_items = E.filtered[E.offset..$];
