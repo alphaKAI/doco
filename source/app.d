@@ -5,6 +5,9 @@ import std.algorithm,
        std.conv;
 import termbox;
 
+/**
+  Key codes 
+*/
 enum KeyAction {
   OTHERS = 0,
   ENTER = 13,
@@ -15,21 +18,35 @@ enum KeyAction {
   ARROW_UP    = 65517
 }
 
-enum y_offset = 1; // for query
+/**
+  vertical offset of items in screen.
+*/
+enum y_offset = 1; // for query input
 
+/**
+  This struct holds environment as states
+*/
 struct Env {
-  string[] inputs;
-  string[] render_items;
-  string[] filtered;
-  size_t query_offset;
-  string query;
-  long selected,
-       cursor;
-  size_t offset;
+  string[] inputs,   // holds input from stdin(recieved from pipe)
+           filtered, // holds holl data of filtered inputs
+           render_items; // holds a part of filtered to output
+  string query; // holds query to filter
+  long selected, // indicates a current selected item of render_items(relative position of filtered in screen)
+       cursor;   // indicates a current selected item of filtered(absolute position of filtered)
+  size_t offset; // indicates an offset for reinder_items(first position of render_items is filtered[offset + selected])
 }
 
+// holds Env
 static Env E;
 
+/**
+  write an item to screen
+
+  ulong x: horizontal position of screen where will be printed
+  ulong y: vertical position of screen where will be printed
+  string line: contents of line
+  bool selected: whether this item is selected, if this variable is true, the line will be printed with highlight
+*/
 void print(ulong x, ulong y, string line, bool selected) {
   uint c;
 
@@ -46,6 +63,9 @@ void print(ulong x, ulong y, string line, bool selected) {
   }
 }
 
+/**
+  update query
+*/
 void updateQuery(bool init = false) {
   immutable query_header = "QUERY> ";
   string print_query  = query_header ~  E.query;
@@ -75,6 +95,10 @@ void updateQuery(bool init = false) {
   }
 }
 
+
+/**
+  update screen
+*/
 void updateItems() {
   clear;
   updateQuery;
@@ -88,6 +112,9 @@ void updateItems() {
   flush;
 }
 
+/**
+  Filtering the input by regex based matching.
+*/
 string[] filterByRegex() {
   string[] ret;
 
