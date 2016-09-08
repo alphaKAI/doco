@@ -86,6 +86,11 @@ void updateItems() {
 string[] filter() {
   string[] ret;
 
+  /+
+    If you intend to input ".*/" to match directory, this filter(program) interpret by character.
+    That means this program will act to interpret incomplete regex pattern,
+    as such a pattern is invalid then this program causes an exception if belows try-catch block doesn't exist.
+  +/
   try {
     auto rgx = regex(E.query);
 
