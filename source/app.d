@@ -2,6 +2,7 @@ import std.stdio, std.range, std.conv, std.regex;
 import termbox;
 
 enum KeyAction {
+  OTHERS = 0,
   ENTER = 13,
   ESC   = 27,
   SPACE = 32,
@@ -132,16 +133,18 @@ void main() {
 
     immutable key = kevent.key;
 
-    with (KeyAction) {
-      if (key == ENTER) { selected = true; quit = true; }
-      else if (key == ESC) { quit = true; }
-      else if (key == BACKSPACE) {
+    final switch (key) with (KeyAction) {
+      case ENTER:
+        selected = true;
+        quit     = true;
+        break;
+      case BACKSPACE:
         if (!E.query.empty) {
           E.query = E.query[0..$-1];
           updateQuery(true);
         }
-      }
-      else if (key == ARROW_UP)    {
+        break;
+      case ARROW_UP:
         if (E.selected > -1) { E.selected--; }
         if (E.cursor > 0) { E.cursor--; }
 
@@ -153,8 +156,8 @@ void main() {
             E.render_items = E.filtered[E.offset..$];
           }
         }
-      }
-      else if (key == ARROW_DOWN)  {
+        break;
+      case ARROW_DOWN:
         if (E.cursor < E.render_items.length-1) { E.cursor++; }
         if ((E.render_items.length < height - 1) && (E.selected < E.render_items.length-1)) { E.selected++; }
         else if ((E.render_items.length > height - 1) && (E.selected < height-1)) { E.selected++; }
@@ -166,14 +169,14 @@ void main() {
             E.render_items = E.filtered[E.offset..$];
           }
         }
-      }
-      else {
-        // Except special keys(Ex: TAB, DEL)
+        break;
+      case SPACE:
+      case OTHERS:
         if ((kevent.ch != 0) || (key == 32 && kevent.ch == 0)) {
           E.query ~= kevent.ch;
           updateQuery(true);
         }
-      }
+      break;
     }
   }
 
