@@ -1,4 +1,8 @@
-import std.stdio, std.range, std.conv, std.regex;
+import std.algorithm,
+       std.range,
+       std.regex,
+       std.stdio,
+       std.conv;
 import termbox;
 
 enum KeyAction {
@@ -63,7 +67,7 @@ void updateQuery(bool init = false) {
   }
 
   if (init) {
-    E.filtered     = filter;
+    E.filtered     = filterByRegex;
     E.render_items = E.filtered;
     E.selected = 0;
     E.cursor   = 0;
@@ -84,7 +88,7 @@ void updateItems() {
   flush;
 }
 
-string[] filter() {
+string[] filterByRegex() {
   string[] ret;
 
   /+
@@ -98,11 +102,7 @@ string[] filter() {
     if (E.query.empty) {
       ret = E.inputs;
     } else {
-      foreach (elem; E.inputs) {
-        if (elem.match(rgx)) {
-          ret ~= elem;
-        }
-      }
+      ret = E.inputs.filter!(x => x.match(rgx)).array;
     }
   } catch {
     ret = E.inputs;
