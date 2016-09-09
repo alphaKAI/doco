@@ -6,7 +6,7 @@ import std.algorithm,
 import termbox;
 
 /**
-  Key codes 
+  Key codes
 */
 enum KeyAction {
   OTHERS = 0,
@@ -116,26 +116,21 @@ void updateItems() {
   Filtering the input by regex based matching.
 */
 string[] filterByRegex() {
-  string[] ret;
-
   /+
     If you intend to input ".*/" to match directory, this filter(program) interpret by character.
     That means this program will act to interpret incomplete regex pattern,
     as such a pattern is invalid then this program causes an exception if belows try-catch block doesn't exist.
   +/
+  if (E.query.empty) {
+    return E.inputs;
+  }
   try {
     auto rgx = regex(E.query);
-
-    if (E.query.empty) {
-      ret = E.inputs;
-    } else {
-      ret = E.inputs.filter!(x => x.match(rgx)).array;
-    }
+    return E.inputs.filter!(x => x.match(rgx)).array;
   } catch {
-    ret = E.inputs;
+    return E.inputs;
   }
-
-  return ret;
+  assert(false);
 }
 
 void main() {
