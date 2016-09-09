@@ -140,6 +140,7 @@ void main() {
 
   init;
   clear;
+  scope(exit) shutdown;
 
   bool quit;
   bool selected;
@@ -203,7 +204,6 @@ void main() {
     }
   }
 
-  shutdown;
 
   if (selected) {
     writeln(E.render_items[E.selected]);
