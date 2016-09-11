@@ -138,69 +138,71 @@ void main() {
     E.inputs ~= line.idup;
   }
 
-  init;
-  clear;
-  scope(exit) shutdown;
-
   bool quit;
   bool selected;
 
-  updateQuery(true);
+  {
+    init;
+    clear;
+    scope(exit) shutdown;
 
-  while (!quit) {
-    updateItems;
+    updateQuery(true);
 
-    Event kevent;
-    kevent.type = EventType.key;
-    pollEvent(&kevent);
+    while (!quit) {
+      updateItems;
 
-    immutable key = kevent.key;
+      Event kevent;
+      kevent.type = EventType.key;
+      pollEvent(&kevent);
 
-    final switch (key) with (KeyAction) {
-      case ENTER:
-        selected = true;
-        quit     = true;
-        break;
-      case BACKSPACE:
-        if (!E.query.empty) {
-          E.query = E.query[0..$-1];
-          updateQuery(true);
-        }
-        break;
-      case ARROW_UP:
-        if (E.selected > -1) { E.selected--; }
-        if (E.cursor > 0) { E.cursor--; }
+      immutable key = kevent.key;
 
-        if (E.selected == -1) {
-          E.selected++;
-
-          if (E.offset > 0) {
-            E.offset--;
-            E.render_items = E.filtered[E.offset..$];
+      final switch (key) with (KeyAction) {
+        case ENTER:
+          selected = true;
+          quit     = true;
+          break;
+        case BACKSPACE:
+          if (!E.query.empty) {
+            E.query = E.query[0..$-1];
+            updateQuery(true);
           }
-        }
-        break;
-      case ARROW_DOWN:
-        if (E.cursor < E.render_items.length-1) { E.cursor++; }
-        if ((E.render_items.length < height - 1) && (E.selected < E.render_items.length-1)) { E.selected++; }
-        else if ((E.render_items.length > height - 1) && (E.selected < height-1)) { E.selected++; }
+          break;
+        case ARROW_UP:
+          if (E.selected > -1) { E.selected--; }
+          if (E.cursor > 0) { E.cursor--; }
 
-        if (E.selected == height - 1) {
-          E.selected--;
+          if (E.selected == -1) {
+            E.selected++;
 
-          if (E.offset < E.filtered.length-1) {
-            E.offset++;
-            E.render_items = E.filtered[E.offset..$];
+            if (E.offset > 0) {
+              E.offset--;
+              E.render_items = E.filtered[E.offset..$];
+            }
           }
-        }
+          break;
+        case ARROW_DOWN:
+          if (E.cursor < E.render_items.length-1) { E.cursor++; }
+          if ((E.render_items.length < height - 1) && (E.selected < E.render_items.length-1)) { E.selected++; }
+          else if ((E.render_items.length > height - 1) && (E.selected < height-1)) { E.selected++; }
+
+          if (E.selected == height - 1) {
+            E.selected--;
+
+            if (E.offset < E.filtered.length-1) {
+              E.offset++;
+              E.render_items = E.filtered[E.offset..$];
+            }
+          }
+          break;
+        case SPACE:
+        case OTHERS:
+          if ((kevent.ch != 0) || (key == 32 && kevent.ch == 0)) {
+            E.query ~= kevent.ch;
+            updateQuery(true);
+          }
         break;
-      case SPACE:
-      case OTHERS:
-        if ((kevent.ch != 0) || (key == 32 && kevent.ch == 0)) {
-          E.query ~= kevent.ch;
-          updateQuery(true);
-        }
-      break;
+      }
     }
   }
 
