@@ -207,7 +207,7 @@ void main() {
   }
 
 
-  if (selected) {
+  if (!E.render_items.empty && selected) {
     writeln(E.render_items[E.selected]);
   }
 }
