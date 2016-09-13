@@ -133,8 +133,10 @@ string[] filterByRegex() {
 }
 
 void main() {
+  auto ansi_color_codes_rgx =  regex(r"(\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K])");
+
   foreach (line; stdin.byLine) {
-    E.inputs ~= line.idup;
+    E.inputs ~= line.idup.replaceAll(ansi_color_codes_rgx, "");
   }
 
   bool quit;
