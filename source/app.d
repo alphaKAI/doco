@@ -159,7 +159,7 @@ void main() {
 
       final switch (key) with (KeyAction) {
         case ENTER:
-          selected = true;
+          selected = E.render_items.empty ? false : true;
           quit     = true;
           break;
         case BACKSPACE:
@@ -207,7 +207,7 @@ void main() {
   }
 
 
-  if (!E.render_items.empty && selected) {
+  if (selected) {
     writeln(E.render_items[E.selected]);
   }
 }
