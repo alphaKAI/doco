@@ -157,6 +157,9 @@ void main() {
       immutable key = kevent.key;
 
       switch (key) with (KeyAction) {
+        case ESC:
+          quit = true;
+          break;
         case ENTER:
           selected = E.render_items.empty ? false : true;
           quit     = true;
@@ -203,7 +206,6 @@ void main() {
       }
     }
   }
-
 
   if (selected) {
     writeln(E.render_items[E.selected]);
