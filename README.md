@@ -12,5 +12,5 @@ This program depends on `termbox-d` and `termbox-d` depends on `termbox`.
 I'll fix this problem by implementing original CLI tool kit for D.   
 
 #LICENSE
-doco is relased under the MIT license.  
+doco is released under the MIT license.  
 Please see `LICENSE` file for details.  
