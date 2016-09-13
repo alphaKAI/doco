@@ -9,7 +9,6 @@ import termbox;
   Key codes
 */
 enum KeyAction {
-  OTHERS = 0,
   ENTER = 13,
   ESC   = 27,
   SPACE = 32,
@@ -157,7 +156,7 @@ void main() {
 
       immutable key = kevent.key;
 
-      final switch (key) with (KeyAction) {
+      switch (key) with (KeyAction) {
         case ENTER:
           selected = E.render_items.empty ? false : true;
           quit     = true;
@@ -195,8 +194,7 @@ void main() {
             }
           }
           break;
-        case SPACE:
-        case OTHERS:
+        default:
           if ((kevent.ch != 0) || (key == 32 && kevent.ch == 0)) {
             E.query ~= kevent.ch;
             updateQuery(true);
