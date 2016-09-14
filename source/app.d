@@ -1,10 +1,11 @@
 import std.algorithm,
+       std.format,
+       std.getopt,
        std.range,
        std.regex,
        std.stdio,
-       std.uni,
-       std.getopt,
-       std.conv;
+       std.conv,
+       std.uni;
 import termbox;
 
 
@@ -75,8 +76,14 @@ void print(ulong x, ulong y, string line, bool selected) {
   update query
 */
 void updateQuery(bool init = false) {
-  immutable prompt = "QUERY> ";
-  string query  = prompt ~ E.query;
+  string query = {
+    immutable prompt = "QUERY%s> %s";
+    Appender!string query = appender!string;
+
+    formattedWrite(query, prompt, E.matchByRegex ? "[regex]" : "[fuzzy]", E.query);
+
+    return query.data;
+  }();
 
   foreach (x; width.iota) {
     uint c;
