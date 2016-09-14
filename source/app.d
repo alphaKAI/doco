@@ -2,8 +2,14 @@ import std.algorithm,
        std.range,
        std.regex,
        std.stdio,
+       std.uni,
        std.conv;
 import termbox;
+
+
+static immutable UPPER_MATCH_SCORE = 20;
+static immutable BOYER_MOORE_SCORE = 10;
+
 
 /**
   Key codes
@@ -33,6 +39,8 @@ struct Env {
   long selected, // indicates a current selected item of render_items(relative position of filtered in screen)
        cursor;   // indicates a current selected item of filtered(absolute position of filtered)
   size_t offset; // indicates an offset for reinder_items(first position of render_items is filtered[offset + selected])
+
+  bool matchByRegex; // Use regex for matching.
 }
 
 // holds Env
@@ -86,7 +94,10 @@ void updateQuery(bool init = false) {
   }
 
   if (init) {
-    E.filtered     = filterByRegex;
+    if (E.matchByRegex)
+      E.filtered     = filterByRegex;
+    else
+      E.filtered     = filterByFuzzyMatcher;
     E.render_items = E.filtered;
     E.selected = 0;
     E.cursor   = 0;
@@ -132,6 +143,44 @@ string[] filterByRegex() {
   assert(false);
 }
 
+
+/**
+  Calculate a score of fuzzy matching by naive algorithm.
+
+    TODO: more efficent, more clever.
+*/
+long fuzzyScore(string input, string query) {
+  long score;
+
+  // step1: upper match.
+  if (input.toUpper == query.toUpper) {
+    score += UPPER_MATCH_SCORE;
+  }
+  // step 2: Boyer-Moore method.
+  if (input.canFind(query)) {
+    score += BOYER_MOORE_SCORE;
+  }
+  // step 3: levenshteinDistance.
+  score -= levenshteinDistance(input, query);
+  return score;
+}
+
+
+/**
+  Filtering the input by fuzzy matching.
+*/
+string[] filterByFuzzyMatcher() {
+  if (E.query.empty) {
+    return E.inputs;
+  }
+  auto arr = E.inputs.dup;
+  arr.sort!((a, b) => fuzzyScore(a, E.query) > fuzzyScore(b, E.query));
+
+  // FIXME: how many items should we returns?
+  return arr;
+}
+
+
 void main() {
   auto ansi_color_codes_rgx = ctRegex!`(\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K])`;
 
@@ -141,6 +190,8 @@ void main() {
 
   bool quit;
   bool selected;
+
+  E.matchByRegex = true;  // now matchByRegex on default.
 
   {
     init;
