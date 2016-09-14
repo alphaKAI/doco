@@ -166,6 +166,12 @@ long fuzzyScore(string input, string query) {
 }
 
 
+unittest {
+  assert(fuzzyScore("aaa", "AaA") > fuzzyScore("aaa", "bbb"));
+  assert(!(fuzzyScore("aaa", "AaA") < fuzzyScore("aaa", "bbb")));
+}
+
+
 /**
   Filtering the input by fuzzy matching.
 */
@@ -180,7 +186,10 @@ string[] filterByFuzzyMatcher() {
   return arr;
 }
 
-
+version(unittest) {
+    void main() { }
+}
+else
 void main() {
   auto ansi_color_codes_rgx = ctRegex!`(\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K])`;
 
