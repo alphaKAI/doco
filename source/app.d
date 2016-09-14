@@ -167,6 +167,12 @@ long fuzzyScore(string input, string query) {
 }
 
 
+unittest {
+  assert(fuzzyScore("aaa", "AaA") > fuzzyScore("aaa", "bbb"));
+  assert(!(fuzzyScore("aaa", "AaA") < fuzzyScore("aaa", "bbb")));
+}
+
+
 /**
   Filtering the input by fuzzy matching.
 */
@@ -182,6 +188,10 @@ string[] filterByFuzzyMatcher() {
 }
 
 
+version(unittest) {
+    void main() { }
+}
+else
 void main(string[] args) {
   bool help, matchByRegex;
 
