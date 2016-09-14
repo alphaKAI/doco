@@ -3,6 +3,7 @@ import std.algorithm,
        std.regex,
        std.stdio,
        std.uni,
+       std.getopt,
        std.conv;
 import termbox;
 
@@ -181,7 +182,31 @@ string[] filterByFuzzyMatcher() {
 }
 
 
-void main() {
+void main(string[] args) {
+  bool help, matchByRegex;
+
+  try {
+    args.getopt(
+      "h|help", &help,          // print help menu.
+      "r|regex", &matchByRegex  // use regex match instead fuzzy match.
+    );
+  }
+  catch (GetOptException) {
+      help = true;
+  }
+
+  if (help) {
+      writeln(`doco
+
+USAGE:
+  doco [OPTION] [ARG]..
+OPTION:
+ -h, --help: display this help menu and exit.
+ -r, --regex: use regex match instead fuzzy match.
+`);
+    return;
+  }
+
   auto ansi_color_codes_rgx = ctRegex!`(\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K])`;
 
   foreach (line; stdin.byLine) {
@@ -191,7 +216,7 @@ void main() {
   bool quit;
   bool selected;
 
-  E.matchByRegex = true;  // now matchByRegex on default.
+  E.matchByRegex = matchByRegex;
 
   {
     init;
