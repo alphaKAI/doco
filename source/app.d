@@ -74,19 +74,19 @@ void print(ulong x, ulong y, string line, bool selected) {
   update query
 */
 void updateQuery(bool init = false) {
-  immutable query_header = "QUERY> ";
-  string print_query  = query_header ~  E.query;
+  immutable prompt = "QUERY> ";
+  string query  = prompt ~ E.query;
 
   foreach (x; width.iota) {
     uint c;
 
-    if (x < print_query.length) {
-      c = cast(uint)print_query[x];
+    if (x < query.length) {
+      c = cast(uint)query[x];
     } else {
       c = cast(uint)' ';
     }
 
-    if (x == print_query.length) {
+    if (x == query.length) {
       setCell(x.to!int, 0, cast(uint)c, cast(ushort)Color.white, cast(ushort)Color.white);
     } else {
       setCell(x.to!int, 0, cast(uint)c, cast(ushort)Color.white, cast(ushort)Color.black);
