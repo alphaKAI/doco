@@ -145,7 +145,7 @@ string[] filterByRegex() {
 
 
 /**
-  Calculate a score of fuzzy matching.
+  Calculate a score of fuzzy matching by naive algorithm.
 
     TODO: more efficent, more clever.
 */
