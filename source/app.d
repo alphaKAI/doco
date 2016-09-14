@@ -6,6 +6,11 @@ import std.algorithm,
        std.conv;
 import termbox;
 
+
+static immutable UPPER_MATCH_SCORE = 20;
+static immutable BOYER_MOORE_SCORE = 10;
+
+
 /**
   Key codes
 */
@@ -149,11 +154,11 @@ long fuzzyScore(string input, string query) {
 
   // step1: upper match.
   if (input.toUpper == query.toUpper) {
-    score += 20;
+    score += UPPER_MATCH_SCORE;
   }
   // step 2: Boyer-Moore method.
   if (input.canFind(query)) {
-    score += 10;
+    score += BOYER_MOORE_SCORE;
   }
   // step 3: levenshteinDistance.
   score -= levenshteinDistance(input, query);
