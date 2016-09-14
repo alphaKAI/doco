@@ -95,10 +95,11 @@ void updateQuery(bool init = false) {
   }
 
   if (init) {
-    if (E.matchByRegex)
+    if (E.matchByRegex) {
       E.filtered     = filterByRegex;
-    else
+    } else {
       E.filtered     = filterByFuzzyMatcher;
+    }
     E.render_items = E.filtered;
     E.selected = 0;
     E.cursor   = 0;
