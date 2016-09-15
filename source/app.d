@@ -9,8 +9,8 @@ import std.algorithm,
 import termbox;
 
 
-static immutable UPPER_MATCH_SCORE = 20;
-static immutable BOYER_MOORE_SCORE = 10;
+static immutable CASE_INSENTIVE_MATCH_SCORE = 20;
+static immutable PARTIAL_MATCH_SCORE        = 10;
 
 
 /**
@@ -161,16 +161,22 @@ string[] filterByRegex() {
 long fuzzyScore(string input, string query) {
   long score;
 
-  // step1: upper match.
-  if (input.toUpper == query.toUpper) {
-    score += UPPER_MATCH_SCORE;
+  auto upperInput = input.toUpper;
+  auto upperQuery = query.toUpper;
+
+  // step1: case-insentive match.
+  if (upperInput == upperQuery) {
+    score += CASE_INSENTIVE_MATCH_SCORE;
   }
-  // step 2: Boyer-Moore method.
-  if (input.canFind(query)) {
-    score += BOYER_MOORE_SCORE;
+
+  // step 2: partial match.
+  if (upperInput.canFind(upperQuery)) {
+    score += PARTIAL_MATCH_SCORE;
   }
+
   // step 3: levenshteinDistance.
   score -= levenshteinDistance(input, query);
+
   return score;
 }
 
