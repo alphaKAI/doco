@@ -1,4 +1,5 @@
 import std.algorithm,
+       std.functional,
        std.format,
        std.getopt,
        std.range,
@@ -189,7 +190,7 @@ string[] filterByFuzzyMatcher() {
     return E.inputs;
   }
   auto arr = E.inputs.dup;
-  arr.sort!((a, b) => fuzzyScore(a, E.query) > fuzzyScore(b, E.query));
+  arr.sort!((a, b) => memoize!fuzzyScore(a, E.query) > memoize!fuzzyScore(b, E.query));
 
   // FIXME: how many items should we returns?
   return arr;
