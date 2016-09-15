@@ -9,8 +9,8 @@ import std.algorithm,
 import termbox;
 
 
-static immutable CASE_INSENTIVE_MATCH_SCORE = 20;
-static immutable PARTIAL_MATCH_SCORE        = 10;
+static immutable SMART_CASE_MATCH_SCORE = 20;
+static immutable PARTIAL_MATCH_SCORE    = 10;
 
 
 /**
@@ -164,9 +164,9 @@ long fuzzyScore(string input, string query) {
   auto upperInput = input.toUpper;
   auto upperQuery = query.toUpper;
 
-  // step1: case-insentive match.
+  // step1: smart-case match.
   if (upperInput == upperQuery) {
-    score += CASE_INSENTIVE_MATCH_SCORE;
+    score += SMART_CASE_MATCH_SCORE;
   }
 
   // step 2: partial match.
