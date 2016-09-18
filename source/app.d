@@ -95,12 +95,10 @@ void updateQuery(bool init = false) {
       c = cast(uint)' ';
     }
 
-    if (x == query.length) {
-      setCell(x.to!int, 0, cast(uint)c, cast(ushort)Color.white, cast(ushort)Color.white);
-    } else {
-      setCell(x.to!int, 0, cast(uint)c, cast(ushort)Color.white, cast(ushort)Color.black);
-    }
+    setCell(x.to!int, 0, cast(uint)c, cast(ushort)Color.white, cast(ushort)Color.black);
   }
+
+  setCursor(cast(int) query.length, 0);
 
   if (init) {
     if (E.matchByRegex) {
