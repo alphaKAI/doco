@@ -7,6 +7,6 @@
   "copyright": "Copyright (C) 2016, alphaKAI",
   "license": "MIT",
   "dependencies":{
-    "termbox":"*"
+    "termbox":"~master"
   }
 }
