@@ -1,4 +1,5 @@
 # doco
+[![Build Status](https://travis-ci.org/alphaKAI/doco.svg?branch=master)](https://travis-ci.org/alphaKAI/doco)
 
 ## About
 

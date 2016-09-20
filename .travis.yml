@@ -1,0 +1,10 @@
+language: d
+d:
+  - dmd
+  - ldc
+branches:
+  only:
+    - master
+script:
+  - git clone https://github.com/alphaKAI/doco
+  - (cd doco && dub build --compiler=${DC})
