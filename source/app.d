@@ -46,7 +46,7 @@ struct Env {
   bool matchByRegex; // Use regex for matching.
 }
 
-// holds Env
+// This variable holds Env statically
 static Env E;
 
 /**
