@@ -61,7 +61,7 @@ ulong mb_strwidth(dstring s)
   foreach (c; s) {
     if (c < 0x0020) {
     } else if (c >= 0x0020 && c < 0x2000) {
-      len +=1;
+      len += 1;
     } else if (c >= 0x2000 && c < 0xFF61) {
       len += 2;
     } else if (c >= 0xFF61 && c < 0xFF9F) {
