@@ -109,11 +109,11 @@ void print(ulong x, ulong y, dstring line, bool selected) {
 void updateQuery(bool init = false) {
   dstring query = {
     immutable prompt = "QUERY%s> %s";
-    Appender!string query = appender!string;
+    Appender!dstring query = appender!dstring;
 
     formattedWrite(query, prompt, E.matchByRegex ? "[regex]" : "[fuzzy]", E.query);
 
-    return query.data.to!dstring;
+    return query.data;
   }();
 
   ulong mb_offset = mb_strwidth(query) -  query.length;
