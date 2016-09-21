@@ -35,10 +35,10 @@ enum y_offset = 1; // for query input
   This struct holds environment as states
 */
 struct Env {
-  string[] inputs,   // holds input from stdin(recieved from pipe)
+  dstring[] inputs,  // holds input from stdin(recieved from pipe)
            filtered, // holds holl data of filtered inputs
            render_items; // holds a part of filtered to output
-  string query; // holds query to filter
+  dstring query; // holds query to filter
   long selected, // indicates a current selected item of render_items(relative position of filtered in screen)
        cursor;   // indicates a current selected item of filtered(absolute position of filtered)
   size_t offset; // indicates an offset for reinder_items(first position of render_items is filtered[offset + selected])
@@ -165,7 +165,7 @@ void updateItems() {
 /**
   Filtering the input by regex based matching.
 */
-string[] filterByRegex() {
+dstring[] filterByRegex() {
   /+
     If you intend to input ".*/" to match directory, this filter(program) interpret by character.
     That means this program will act to interpret incomplete regex pattern,
@@ -189,7 +189,7 @@ string[] filterByRegex() {
 
     TODO: more efficent, more clever.
 */
-long fuzzyScore(string input, string query) {
+long fuzzyScore(dstring input, dstring query) {
   long score;
 
   auto upperInput = input.toUpper;
@@ -221,7 +221,7 @@ unittest {
 /**
   Filtering the input by fuzzy matching.
 */
-string[] filterByFuzzyMatcher() {
+dstring[] filterByFuzzyMatcher() {
   if (E.query.empty) {
     return E.inputs;
   }
@@ -265,7 +265,7 @@ OPTION:
   auto ansi_color_codes_rgx = ctRegex!`(\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K])`;
 
   foreach (line; stdin.byLine) {
-    E.inputs ~= line.idup.replaceAll(ansi_color_codes_rgx, "");
+    E.inputs ~= line.idup.replaceAll(ansi_color_codes_rgx, "").to!dstring;
   }
 
   bool quit;
