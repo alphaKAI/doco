@@ -129,7 +129,7 @@ void updateQuery(bool init = false) {
     setCell(x.to!int, 0, cast(uint)c, cast(ushort)Color.white, cast(ushort)Color.black);
   }
 
-  setCursor(cast(int) query.length, 0);
+  setCursor(cast(int) mb_strwidth(query), 0);
 
   if (init) {
     if (E.matchByRegex) {
