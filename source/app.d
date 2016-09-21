@@ -35,10 +35,10 @@ enum y_offset = 1; // for query input
   This struct holds environment as states
 */
 struct Env {
-  string[] inputs,   // holds input from stdin(recieved from pipe)
+  dstring[] inputs,  // holds input from stdin(recieved from pipe)
            filtered, // holds holl data of filtered inputs
            render_items; // holds a part of filtered to output
-  string query; // holds query to filter
+  dstring query; // holds query to filter
   long selected, // indicates a current selected item of render_items(relative position of filtered in screen)
        cursor;   // indicates a current selected item of filtered(absolute position of filtered)
   size_t offset; // indicates an offset for reinder_items(first position of render_items is filtered[offset + selected])
@@ -50,6 +50,36 @@ struct Env {
 static Env E;
 
 /**
+  return the display width of UTF-32 string.
+  see also http://php.net/manual/en/function.mb-strwidth.php.
+
+  dstring s: a (decoded) string
+*/
+ulong mb_strwidth(dstring s)
+{
+  ulong len;
+  foreach (c; s) {
+    if (c < 0x0020) {
+    } else if (c >= 0x0020 && c < 0x2000) {
+      len += 1;
+    } else if (c >= 0x2000 && c < 0xFF61) {
+      len += 2;
+    } else if (c >= 0xFF61 && c < 0xFF9F) {
+      len += 1;
+    } else {
+      len += 2;
+    }
+  }
+  return len;
+}
+
+unittest {
+  assert(mb_strwidth("a") == 1);
+  assert(mb_strwidth("吾輩は猫である.") == 15);
+  assert(mb_strwidth("🍣食べたい...") == 13);
+}
+
+/**
   write an item to screen
 
   ulong x: horizontal position of screen where will be printed
@@ -57,7 +87,7 @@ static Env E;
   string line: contents of line
   bool selected: whether this item is selected, if this variable is true, the line will be printed with highlight
 */
-void print(ulong x, ulong y, string line, bool selected) {
+void print(ulong x, ulong y, dstring line, bool selected) {
   uint c;
 
   if (x < line.length) {
@@ -77,16 +107,17 @@ void print(ulong x, ulong y, string line, bool selected) {
   update query
 */
 void updateQuery(bool init = false) {
-  string query = {
+  dstring query = {
     immutable prompt = "QUERY%s> %s";
-    Appender!string query = appender!string;
+    Appender!dstring query = appender!dstring;
 
     formattedWrite(query, prompt, E.matchByRegex ? "[regex]" : "[fuzzy]", E.query);
 
     return query.data;
   }();
 
-  foreach (x; width.iota) {
+  ulong mb_offset = mb_strwidth(query) -  query.length;
+  foreach (x; (width - mb_offset).iota) {
     uint c;
 
     if (x < query.length) {
@@ -98,7 +129,7 @@ void updateQuery(bool init = false) {
     setCell(x.to!int, 0, cast(uint)c, cast(ushort)Color.white, cast(ushort)Color.black);
   }
 
-  setCursor(cast(int) query.length, 0);
+  setCursor(cast(int) mb_strwidth(query), 0);
 
   if (init) {
     if (E.matchByRegex) {
@@ -121,8 +152,9 @@ void updateItems() {
   clear;
   updateQuery;
 
-  foreach (y, input; E.render_items) {
-    foreach (x; width.iota) {
+  foreach (y, input; E.render_items.map!(s => s.to!dstring).enumerate) {
+    ulong mb_offset = mb_strwidth(input) - input.length;
+    foreach (x; (width - mb_offset).iota) {
       print(x, y, input, y == E.selected);
     }
   }
@@ -133,7 +165,7 @@ void updateItems() {
 /**
   Filtering the input by regex based matching.
 */
-string[] filterByRegex() {
+dstring[] filterByRegex() {
   /+
     If you intend to input ".*/" to match directory, this filter(program) interpret by character.
     That means this program will act to interpret incomplete regex pattern,
@@ -157,7 +189,7 @@ string[] filterByRegex() {
 
     TODO: more efficent, more clever.
 */
-long fuzzyScore(string input, string query) {
+long fuzzyScore(dstring input, dstring query) {
   long score;
 
   auto upperInput = input.toUpper;
@@ -189,7 +221,7 @@ unittest {
 /**
   Filtering the input by fuzzy matching.
 */
-string[] filterByFuzzyMatcher() {
+dstring[] filterByFuzzyMatcher() {
   if (E.query.empty) {
     return E.inputs;
   }
@@ -233,7 +265,7 @@ OPTION:
   auto ansi_color_codes_rgx = ctRegex!`(\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K])`;
 
   foreach (line; stdin.byLine) {
-    E.inputs ~= line.idup.replaceAll(ansi_color_codes_rgx, "");
+    E.inputs ~= line.idup.replaceAll(ansi_color_codes_rgx, "").to!dstring;
   }
 
   bool quit;
