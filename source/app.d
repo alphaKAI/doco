@@ -57,7 +57,7 @@ static Env E;
   string line: contents of line
   bool selected: whether this item is selected, if this variable is true, the line will be printed with highlight
 */
-void print(ulong x, ulong y, string line, bool selected) {
+void print(ulong x, ulong y, dstring line, bool selected) {
   uint c;
 
   if (x < line.length) {
@@ -77,13 +77,13 @@ void print(ulong x, ulong y, string line, bool selected) {
   update query
 */
 void updateQuery(bool init = false) {
-  string query = {
+  dstring query = {
     immutable prompt = "QUERY%s> %s";
     Appender!string query = appender!string;
 
     formattedWrite(query, prompt, E.matchByRegex ? "[regex]" : "[fuzzy]", E.query);
 
-    return query.data;
+    return query.data.to!dstring;
   }();
 
   foreach (x; width.iota) {
@@ -121,7 +121,7 @@ void updateItems() {
   clear;
   updateQuery;
 
-  foreach (y, input; E.render_items) {
+  foreach (y, input; E.render_items.map!(s => s.to!dstring).enumerate) {
     foreach (x; width.iota) {
       print(x, y, input, y == E.selected);
     }
