@@ -50,6 +50,36 @@ struct Env {
 static Env E;
 
 /**
+  return the display width of UTF-32 string.
+  see also http://php.net/manual/en/function.mb-strwidth.php.
+
+  dstring s: a (decoded) string
+*/
+ulong mb_strwidth(dstring s)
+{
+  ulong len;
+  foreach (c; s) {
+    if (c < 0x0020) {
+    } else if (c >= 0x0020 && c < 0x2000) {
+      len +=1;
+    } else if (c >= 0x2000 && c < 0xFF61) {
+      len += 2;
+    } else if (c >= 0xFF61 && c < 0xFF9F) {
+      len += 1;
+    } else {
+      len += 2;
+    }
+  }
+  return len;
+}
+
+unittest {
+  assert(mb_strwidth("a") == 1);
+  assert(mb_strwidth("吾輩は猫である.") == 15);
+  assert(mb_strwidth("🍣食べたい...") == 13);
+}
+
+/**
   write an item to screen
 
   ulong x: horizontal position of screen where will be printed
@@ -86,7 +116,8 @@ void updateQuery(bool init = false) {
     return query.data.to!dstring;
   }();
 
-  foreach (x; width.iota) {
+  ulong mb_offset = mb_strwidth(query) -  query.length;
+  foreach (x; (width - mb_offset).iota) {
     uint c;
 
     if (x < query.length) {
@@ -122,7 +153,8 @@ void updateItems() {
   updateQuery;
 
   foreach (y, input; E.render_items.map!(s => s.to!dstring).enumerate) {
-    foreach (x; width.iota) {
+    ulong mb_offset = mb_strwidth(input) - input.length;
+    foreach (x; (width - mb_offset).iota) {
       print(x, y, input, y == E.selected);
     }
   }
