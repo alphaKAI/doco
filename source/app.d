@@ -177,7 +177,7 @@ dstring[] filterByRegex() {
   try {
     auto rgx = regex(E.query);
     return E.inputs.filter!(x => x.match(rgx)).array;
-  } catch {
+  } catch(Throwable) {
     return E.inputs;
   }
   assert(false);
