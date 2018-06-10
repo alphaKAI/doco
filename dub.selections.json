@@ -1,6 +1,7 @@
 {
 	"fileVersion": 1,
 	"versions": {
+		"east_asian_width": "1.0.0",
 		"termbox": "~master"
 	}
 }
