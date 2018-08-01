@@ -8,10 +8,11 @@ import std.algorithm,
        std.conv,
        std.uni;
 import termbox;
+import eastasianwidth;
 
 
-static immutable SMART_CASE_MATCH_SCORE = 20;
-static immutable PARTIAL_MATCH_SCORE    = 10;
+enum SMART_CASE_MATCH_SCORE = 20;
+enum PARTIAL_MATCH_SCORE    = 10;
 
 
 /**
@@ -50,36 +51,6 @@ struct Env {
 static Env E;
 
 /**
-  return the display width of UTF-32 string.
-  see also http://php.net/manual/en/function.mb-strwidth.php.
-
-  dstring s: a (decoded) string
-*/
-ulong mb_strwidth(dstring s)
-{
-  ulong len;
-  foreach (c; s) {
-    if (c < 0x0020) {
-    } else if (c >= 0x0020 && c < 0x2000) {
-      len += 1;
-    } else if (c >= 0x2000 && c < 0xFF61) {
-      len += 2;
-    } else if (c >= 0xFF61 && c < 0xFF9F) {
-      len += 1;
-    } else {
-      len += 2;
-    }
-  }
-  return len;
-}
-
-unittest {
-  assert(mb_strwidth("a") == 1);
-  assert(mb_strwidth("吾輩は猫である.") == 15);
-  assert(mb_strwidth("🍣食べたい...") == 13);
-}
-
-/**
   write an item to screen
 
   ulong x: horizontal position of screen where will be printed
@@ -116,7 +87,7 @@ void updateQuery(bool init = false) {
     return query.data;
   }();
 
-  ulong mb_offset = mb_strwidth(query) -  query.length;
+  ulong mb_offset = displayWidth(query) -  query.length;
   foreach (x; (width - mb_offset).iota) {
     uint c;
 
@@ -129,7 +100,7 @@ void updateQuery(bool init = false) {
     setCell(x.to!int, 0, cast(uint)c, cast(ushort)Color.white, cast(ushort)Color.black);
   }
 
-  setCursor(cast(int) mb_strwidth(query), 0);
+  setCursor(cast(int) displayWidth(query), 0);
 
   if (init) {
     if (E.matchByRegex) {
@@ -153,7 +124,7 @@ void updateItems() {
   updateQuery;
 
   foreach (y, input; E.render_items.map!(s => s.to!dstring).enumerate) {
-    ulong mb_offset = mb_strwidth(input) - input.length;
+    ulong mb_offset = displayWidth(input) - input.length;
     foreach (x; (width - mb_offset).iota) {
       print(x, y, input, y == E.selected);
     }
